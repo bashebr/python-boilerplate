@@ -1,0 +1,42 @@
+name: Update Dependencies
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+jobs:
+  update-deps:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install uv
+
+      - run: uv lock --upgrade
+
+      - name: Detect changes
+        id: diff
+        run: |
+          if git diff --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: peter-evans/create-pull-request@v6
+        if: steps.diff.outputs.changed == 'true'
+        with:
+          title: "chore: update dependencies"
+          commit-message: "chore: update dependencies"
+          branch: "chore/update-deps"
+          delete-branch: true
