@@ -1,0 +1,7 @@
+{
+  "extends": ["config:base", ":semanticCommits"],
+  "schedule": ["before 5am on monday"],
+  "python": {
+    "enabled": true
+  }
+}

@@ -1,0 +1,89 @@
+[project]
+name = "python-boilerplate"
+version = "0.1.0"
+description = "A professional-grade Python boilerplate template using UV."
+authors = [
+    { name = "Brhane G.A", email = "bgashebr@gmail.com" }
+]
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+
+dependencies = [
+    "typer",
+    "rich",
+    "pydantic",
+    "pydantic-settings",
+    "fastapi",
+    "uvicorn",
+]
+
+[project.scripts]
+boiler = "python_boilerplate.cli:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+# --------------------------------------------------------
+# ✅ UV dependency groups (correct TOML format)
+# --------------------------------------------------------
+[dependency-groups]
+dev = [
+    "ruff",
+    "mypy",
+    "black",
+    "pytest",
+    "pytest-cov",
+    "pre-commit",
+    "httpx",
+]
+
+# --------------------------------------------------------
+# ✅ Ruff Configuration
+# --------------------------------------------------------
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "W"]
+ignore = ["E501"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+# --------------------------------------------------------
+# ✅ Mypy Configuration
+# --------------------------------------------------------
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unused_ignores = true
+warn_unreachable = true
+disallow_untyped_defs = true
+exclude = ["tests/"]
+plugins = ["pydantic.mypy"]
+
+[tool.pydantic-mypy]
+init_for_typed = true
+warn_required_dynamic_aliases = true
+warn_untyped_fields = true
+
+# --------------------------------------------------------
+# ✅ Pytest Configuration
+# --------------------------------------------------------
+[tool.pytest.ini_options]
+addopts = "--maxfail=1 --disable-warnings"
+testpaths = ["tests"]
+
+# --------------------------------------------------------
+# ✅ Semantic Release
+# --------------------------------------------------------
+[tool.semantic_release]
+version_variable = "pyproject.toml:project.version"
+branch = "main"
+upload_to_pypi = false
+upload_to_release = true
+commit_parser = "angular"
+major_on_breaking = true
