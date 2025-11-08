@@ -20,6 +20,33 @@ jobs:
               with:
                   python-version: "3.12"
 
+            - name: Read project version
+              id: version
+              run: |
+                  VERSION=$(python - <<'PY'
+                  from pathlib import Path
+                  import tomllib
+
+                  data = tomllib.loads(Path('pyproject.toml').read_text())
+                  print(data['project']['version'])
+                  PY
+                  )
+                  echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+            - name: Seed initial tag if missing
+              env:
+                  VERSION: ${{ steps.version.outputs.version }}
+              run: |
+                  if git tag --list 'v*' | grep -q .; then
+                      echo "Tags already exist; skipping seed."
+                      exit 0
+                  fi
+
+                  git config user.name "github-actions"
+                  git config user.email "github-actions@github.com"
+                  git tag -a "v${VERSION}" -m "chore: seed initial release ${VERSION}"
+                  git push origin "v${VERSION}"
+
             - run: pip install python-semantic-release
 
             - name: Publish release
