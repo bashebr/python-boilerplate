@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from collections.abc import Callable
-from typing import Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from fastapi import FastAPI
 
@@ -12,9 +14,17 @@ app = FastAPI(title="Boilerplate FastAPI App")
 
 RouteFn = TypeVar("RouteFn", bound=Callable[..., dict[str, str]])
 
+if TYPE_CHECKING:  # Provide typed decorator stubs for tooling
 
-def typed_get(path: str, **kwargs: Any) -> Callable[[RouteFn], RouteFn]:
-    return cast(Callable[[RouteFn], RouteFn], app.get(path, **kwargs))
+    def typed_get(
+        *_: Any, **__: Any
+    ) -> Callable[[RouteFn], RouteFn]:  # pragma: no cover
+        def decorator(func: RouteFn) -> RouteFn:
+            return func
+
+        return decorator
+else:
+    typed_get = app.get  # type: ignore[assignment]
 
 
 @typed_get("/health")

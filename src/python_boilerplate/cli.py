@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from collections.abc import Callable
-from typing import Annotated, Any, TypeVar, cast
+from typing import TYPE_CHECKING, Annotated, Any, TypeVar
 
 import typer
 
@@ -7,15 +9,24 @@ from .logging_config import setup_logging
 
 app = typer.Typer(help="CLI entrypoint for the boilerplate project.")
 
-F = TypeVar("F", bound=Callable[..., None])
+F = TypeVar("F", bound=Callable[..., Any])
 
+if TYPE_CHECKING:  # Provide typed decorator stubs for mypy
 
-def typed_callback(**kwargs: Any) -> Callable[[F], F]:
-    return cast(Callable[[F], F], app.callback(**kwargs))
+    def typed_callback(**_: Any) -> Callable[[F], F]:  # pragma: no cover - type helper
+        def decorator(func: F) -> F:
+            return func
 
+        return decorator
 
-def typed_command(**kwargs: Any) -> Callable[[F], F]:
-    return cast(Callable[[F], F], app.command(**kwargs))
+    def typed_command(**_: Any) -> Callable[[F], F]:  # pragma: no cover - type helper
+        def decorator(func: F) -> F:
+            return func
+
+        return decorator
+else:  # Use real Typer decorators at runtime
+    typed_callback = app.callback  # type: ignore[assignment]
+    typed_command = app.command  # type: ignore[assignment]
 
 
 @typed_callback(invoke_without_command=True)
