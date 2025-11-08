@@ -40,20 +40,6 @@ dev = [
 ]
 
 # --------------------------------------------------------
-# ✅ Ruff Configuration
-# --------------------------------------------------------
-[tool.ruff]
-line-length = 88
-target-version = "py312"
-
-[tool.ruff.lint]
-select = ["E", "F", "I", "B", "W"]
-ignore = ["E501"]
-
-[tool.ruff.format]
-quote-style = "double"
-
-# --------------------------------------------------------
 # ✅ Mypy Configuration
 # --------------------------------------------------------
 [tool.mypy]
