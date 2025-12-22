@@ -33,7 +33,7 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - uses: peter-evans/create-pull-request@v7
+      - uses: peter-evans/create-pull-request@v8
         if: steps.diff.outputs.changed == 'true'
         with:
           title: "chore: update dependencies"
